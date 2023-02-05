@@ -1,4 +1,4 @@
-## pull_all_br.sh
+## pull all branches loop
 cd /git/repo
 
 ```
