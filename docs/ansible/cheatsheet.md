@@ -41,6 +41,9 @@ At beginning of template
 ```
 #jinja2: trim_blocks:False
 ```
+```
+#jinja2: lstrip_blocks: "True"
+```
 
 ___
 
