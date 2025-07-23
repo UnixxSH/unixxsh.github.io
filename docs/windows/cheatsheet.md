@@ -61,3 +61,49 @@ ___
 ```powershell
 Get-ChildItem C:\Users\*\.cache | Where{$_.LastWriteTime -gt (Get-Date).AddDays(-61)}| Select Parent
 ```
+
+___
+
+## Get old Chrome version
+```powershell
+$ChromeVersion = '115'
+
+$requestId = ([String][Guid]::NewGuid()).ToUpper()
+$sessionId = ([String][Guid]::NewGuid()).ToUpper()
+
+$xml = @"
+<?xml version="1.0" encoding="UTF-8"?>
+<request protocol="3.0" updater="Omaha" sessionid="{$sessionId}"
+    installsource="update3web-ondemand" requestid="{$requestId}">
+    <os platform="win" version="10.0" arch="x64" />
+    <app appid="{8A69D345-D564-463C-AFF1-A69D9E530F96}" version="5.0.375"
+        ap="x64-stable-statsdef_0" lang="" brand="GCEB">
+        <updatecheck targetversionprefix="$ChromeVersion"/>
+    </app>
+</request>
+"@
+
+$webRequest = @{
+    Method    = 'Post'
+    Uri       = 'https://tools.google.com/service/update2'
+    Headers   = @{
+        'Content-Type' = 'application/x-www-form-urlencoded'
+        'X-Goog-Update-Interactivity' = 'fg'
+    }
+    Body      = $Xml
+}
+
+$result = Invoke-WebRequest @webRequest -UseBasicParsing
+$contentXml = [xml]$result.Content
+$status = $contentXml.response.app.updatecheck.status
+if ($status -eq 'ok') {
+    $package = $contentXml.response.app.updatecheck.manifest.packages.package
+    $urls = $contentXml.response.app.updatecheck.urls.url | ForEach-Object { $_.codebase + $package.name }
+    Write-Output "--- Chrome Windows 64-bit found. Hash=$($package.hash) Hash_sha256=$($package.hash_sha256)). ---"
+    Write-Output $urls
+}
+else {
+    Write-Output "Chrome not found (status: $status)"
+}
+```
+source: https://stackoverflow.com/a/75555314
