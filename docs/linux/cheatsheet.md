@@ -102,7 +102,7 @@ openssl enc -aes-256-cbc -pbkdf2 -pass pass:mypass -d -in encrypted -out decrypt
 
 ___
 
-## Enable DNSSEC at Scaleway
+## Toggle DNSSEC at Scaleway
 ```bash
 curl https://api.scaleway.com/domain/v2beta1/domains/mydomain/enable-dnssec \
 -X POST \
@@ -118,6 +118,13 @@ curl https://api.scaleway.com/domain/v2beta1/domains/mydomain/enable-dnssec \
         }
     }
 }'
+```
+```bash
+curl -X POST \
+  -H "X-Auth-Token: $SCW_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{}' \
+  "https://api.scaleway.com/domain/v2beta1/domains/{domain}/disable-dnssec"
 ```
 
 ___
