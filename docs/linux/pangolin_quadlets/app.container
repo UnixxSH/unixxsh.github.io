@@ -1,0 +1,18 @@
+[Container]
+Pod=pangolin.pod
+AutoUpdate=registry
+ContainerName=app
+Image=docker.io/fosrl/pangolin:ee-latest
+Volume=%h/config/:/app/config:z
+#Exec='npm run start --listen=0.0.0.0:3001'
+Notify=healthy
+HealthCmd="/usr/bin/curl -f http://localhost:3001/api/v1/"
+HealthInterval=3s
+HealthRetries=15
+HealthTimeout=15s
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

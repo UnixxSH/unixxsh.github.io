@@ -1,0 +1,19 @@
+[Unit]
+Description=Gerbil Service
+After=app.service
+Requires=app.service
+
+[Container]
+Pod=pangolin.pod
+AutoUpdate=registry
+AddCapability=NET_ADMIN SYS_MODULE
+ContainerName=gerbil
+Exec='--reachableAt=http://127.0.0.1:3003' '--generateAndSaveKeyTo=/var/config/key' '--remoteConfig=http://app:3001/api/v1/'
+Image=docker.io/fosrl/gerbil
+Volume=%h/config/:/var/config:z
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

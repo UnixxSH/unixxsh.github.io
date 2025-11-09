@@ -5,12 +5,12 @@ parent: Linux
 nav_order: 4
 ---
 
-# Pangolin installation on AlmaLinux with rootless podman
+# Pangolin installation on AlmaLinux 10 with rootless quadlets
 
-## Firewalld
+## Requirements
 
 ```
-dnf install -y firewalld podman epel-release && dnf install -y podman-compose
+dnf install -y firewalld podman vim
 systemctl enable --now firewalld
 firewall-cmd --add-service=http --permanent
 firewall-cmd --add-service=https --permanent
@@ -20,32 +20,46 @@ firewall-cmd --reload
 echo 'net.ipv4.ip_unprivileged_port_start=80' >> /etc/sysctl.conf && sysctl -p
 ```
 
-**DO NOT START CONTAINERS YET**
+## User setup
+
 ```
-adduser pangolin
+useradd pangolin
+usermod -aG systemd-journal pangolin
 su - pangolin
-loginctl enable-linger 1001
-curl -fsSL https://pangolin.net/get-installer.sh | bash
+loginctl enable-linger pangolin
 ```
 
-**DO NOT START CONTAINERS YET**
+## Environment setup
+
 ```
+mkdir -p .config/containers/systemd
+mkdir -p config/traefik/logs
+```
+
+Get all [files](https://github.com/UnixxSH/unixxsh.github.io/tree/main/docs/linux/pangolin_quadlets) and put them in ~/.config/containers/systemd
+
+```
+sed -i 's/PLACEHOLDER/CHANGEME_HOSTIP/g' .config/containers/systemd/pangolin.pod
+systemctl --user daemon-reload
+```
+
+**DO NOT START CONTAINERS**
+```
+curl -fsSL https://pangolin.net/get-installer.sh | bash
 ./installer
 ```
 
-Add selinux flag to config volumes
+Edit config/config.yml if needed
+
+## Start application
+
 ```
-:z
+systemctl --user enable --now app
+systemctl --user enable --now gerbil
+systemctl --user enable --now traefik
 ```
 
-Add ee- before image tag for enterprise edition
-```
-ee-version
-```
-
-Start pangolin
-```
-podman compose up -d
-```
 ___
-*Reference: https://docs.pangolin.net/self-host/quick-install*
+References: 
+  - https://docs.pangolin.net/self-host/quick-install
+  - https://github.com/orgs/fosrl/discussions/1609

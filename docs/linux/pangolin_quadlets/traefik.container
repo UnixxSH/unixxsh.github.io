@@ -1,0 +1,20 @@
+[Unit]
+Description=Traefik Reverse Proxy
+After=app.service
+Requires=app.service
+
+[Container]
+Pod=pangolin.pod
+AutoUpdate=registry
+ContainerName=traefik
+Exec='--configFile=/etc/traefik/traefik_config.yml'
+Image=docker.io/traefik
+Volume=%h/config/traefik:/etc/traefik:ro
+Volume=%h/config/letsencrypt:/letsencrypt
+Volume=%h/config/traefik/logs:/var/log/traefik
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,11 @@
+[Pod]
+PodName=pangolin
+
+## Main ports
+PublishPort=PLACEHOLDER:80:80/tcp
+PublishPort=PLACEHOLDER:443:443/tcp
+PublishPort=PLACEHOLDER:443:443/udp
+
+## Gerbil ports
+PublishPort=PLACEHOLDER:51820:51820/udp
+PublishPort=PLACEHOLDER:21820:21820/udp
