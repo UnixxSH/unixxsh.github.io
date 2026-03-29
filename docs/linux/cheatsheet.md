@@ -147,3 +147,12 @@ ___
 ```bash
 .. | awk -v myvar="${bash_variable}" '$0 ~ myvar { print $1 }'
 ```
+
+___
+
+## steam onlinefix DLL
+
+In game launch options:
+```
+WINEDLLOVERRIDES="OnlineFix64=n;SteamOverlay64=n;winmm=n,b;dnet=n;steam_api64=n;winhttp=n,b" %command%
+```
