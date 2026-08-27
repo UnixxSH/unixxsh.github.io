@@ -72,3 +72,26 @@ ___
 ```bash
 kubectl get pods -A -o jsonpath='{range .items[*]}{.metadata.name} {.metadata.ownerReferences[].kind}{"\n"}{end}'
 ```
+
+___
+
+## Get pod count by node
+```bash
+kubectl get pods --all-namespaces \
+  --field-selector status.phase=Running \
+  -o jsonpath='{range .items[*]}{.spec.nodeName}{"\n"}{end}' \
+  | sort | uniq -c | sort -rn
+```
+
+___
+
+## (AWS) Get nodes by AZ
+```bash
+kubectl get nodes \
+  -o custom-columns=\
+"NAME:.metadata.name,\
+AZ:.metadata.labels.topology\.kubernetes\.io/zone,\
+INSTANCE-TYPE:.metadata.labels.node\.kubernetes\.io/instance-type,\
+NODE-GROUP:.metadata.labels.pasx/node,\
+STATUS:.status.conditions[-1].type"
+```
